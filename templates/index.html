@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <h1>ExamEye</h1>
+                    <p>Semantic Surveillance & Cheating Detection</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#overview">Overview</a>
+                <a href="#features">Features</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#risk-log">Risk Log</a>
+                <a href="/signin">Sign In</a>
+                <a href="/admin-login">Admin Login</a>
+                <a href="/signup" class="btn btn-primary"><i class="fas fa-user-plus"></i> Register Now</a>
+            </nav>
+        </header>
+
+        <main>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-stack" aria-live="polite">
+                {% for category, message in messages %}
+                <div class="flash-item {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <section class="hero" id="overview">
+                <div class="hero-copy">
+                    <p class="eyebrow"><i class="fas fa-microchip"></i> AI-Assisted Monitoring</p>
+                    <h2>Semantic Surveillance System & Cheating Detection</h2>
+                    <p>
+                        ExamEye leverages Knowledge Graphs and Expert Models to detect suspicious behavior in real-time,
+                        delivering reliable exam integrity through transparent evidence capture and semantic insight.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/signin" class="btn btn-primary"><i class="fas fa-right-to-bracket"></i> Sign In</a>
+                        <a href="/signup" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Create Account</a>
+                    </div>
+                </div>
+                <div class="hero-image" title="Smart evidence pipeline">
+                    <svg viewBox="0 0 560 320" role="img"
+                        aria-label="Visual representation of monitoring, analysis, and evidence pipeline">
+                        <rect x="20" y="36" width="160" height="100" rx="12" fill="#e6f2ef" stroke="#0f766e" />
+                        <text x="46" y="74" fill="#0f766e" font-family="Manrope, sans-serif" font-size="14"
+                            font-weight="700">Live Camera</text>
+                        <text x="46" y="95" fill="#5a6a70" font-family="Manrope, sans-serif" font-size="12">Face +
+                            gesture stream</text>
+
+                        <rect x="200" y="36" width="160" height="100" rx="12" fill="#f2ede3" stroke="#c96a37" />
+                        <text x="226" y="74" fill="#c96a37" font-family="Manrope, sans-serif" font-size="14"
+                            font-weight="700">Model Layer</text>
+                        <text x="226" y="95" fill="#5a6a70" font-family="Manrope, sans-serif" font-size="12">Anomaly
+                            scoring</text>
+
+                        <rect x="380" y="36" width="160" height="100" rx="12" fill="#e6f2ef" stroke="#0f766e" />
+                        <text x="410" y="74" fill="#0f766e" font-family="Manrope, sans-serif" font-size="14"
+                            font-weight="700">Evidence Vault</text>
+                        <text x="410" y="95" fill="#5a6a70" font-family="Manrope, sans-serif" font-size="12">Signed
+                            event packets</text>
+
+                        <line x1="180" y1="86" x2="200" y2="86" stroke="#1e2a2f" stroke-width="2" />
+                        <line x1="360" y1="86" x2="380" y2="86" stroke="#1e2a2f" stroke-width="2" />
+
+                        <rect x="120" y="182" width="320" height="94" rx="12" fill="#ffffff" stroke="#ddd5c8" />
+                        <text x="150" y="218" fill="#1e2a2f" font-family="Space Grotesk, sans-serif" font-size="16"
+                            font-weight="700">Reviewer Dashboard</text>
+                        <text x="150" y="240" fill="#5a6a70" font-family="Manrope, sans-serif" font-size="12">Timeline
+                            snippets, confidence scores, and action logs</text>
+                        <line x1="280" y1="136" x2="280" y2="182" stroke="#1e2a2f" stroke-width="2"
+                            stroke-dasharray="5 5" />
+                    </svg>
+                </div>
+            </section>
+
+            <section class="stats-grid" aria-label="Key integrity metrics">
+                <article class="stat-card">
+                    <p class="stat-value">96.4%</p>
+                    <p class="stat-label">Behavior classification precision</p>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-value">2.1 min</p>
+                    <p class="stat-label">Average review time per flagged case</p>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-value">100%</p>
+                    <p class="stat-label">Signed event and timestamp coverage</p>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-value">24/7</p>
+                    <p class="stat-label">Monitoring readiness and retention policy</p>
+                </article>
+            </section>
+
+            <section id="features">
+                <h2 class="section-title">Core Capabilities</h2>
+                <p class="section-subtext">
+                    The platform is designed for institutions that need clear review workflows, practical automation,
+                    and policy-aligned audit trails.
+                </p>
+                <div class="cards-grid">
+                    <article class="feature-card">
+                        <i class="fas fa-eye"></i>
+                        <h3>Context-Aware Monitoring</h3>
+                        <p>Detects gaze drift, multi-person presence, and prohibited object patterns during active
+                            sessions.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fas fa-lock"></i>
+                        <h3>Tamper-Aware Evidence</h3>
+                        <p>Every flagged event is packaged with hash metadata and chain-of-custody records for audits.
+                        </p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Smart Clip Generation</h3>
+                        <p>Auto-builds pre-event and post-event clips so reviewers can evaluate incidents quickly.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fas fa-id-card"></i>
+                        <h3>Identity Binding</h3>
+                        <p>Session, candidate ID, and event payload stay linked from capture through final review.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fas fa-database"></i>
+                        <h3>Offline Recovery Buffer</h3>
+                        <p>Temporary local buffering ensures event continuity when network instability occurs.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Behavior Trend Reports</h3>
+                        <p>Summarizes anomaly rate by room, course, and session to support policy improvement.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="workflow" class="workflow">
+                <h2 class="section-title">Review Workflow</h2>
+                <p class="section-subtext">A practical sequence from capture to resolution, built for proctors and
+                    compliance teams.</p>
+                <div class="workflow-steps">
+                    <article class="step">
+                        <span>STEP 01</span>
+                        <h3>Capture</h3>
+                        <p>Session starts with camera validation, ID check, and environment baseline.</p>
+                    </article>
+                    <article class="step">
+                        <span>STEP 02</span>
+                        <h3>Score</h3>
+                        <p>Signals are scored continuously and grouped into meaningful incidents.</p>
+                    </article>
+                    <article class="step">
+                        <span>STEP 03</span>
+                        <h3>Resolve</h3>
+                        <p>Reviewer approves, escalates, or dismisses with complete evidence context.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="risk-log" class="risk-table-wrap">
+                <h2 class="section-title">Example Incident Register</h2>
+                <p class="section-subtext">Structured log format for training operations teams and quality reviewers.
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Candidate</th>
+                            <th>Event</th>
+                            <th>Risk</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10:14:28</td>
+                            <td>EX-2041</td>
+                            <td>Repeated off-screen gaze</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>Clip generated, queued for review</td>
+                        </tr>
+                        <tr>
+                            <td>10:21:52</td>
+                            <td>EX-1987</td>
+                            <td>Secondary face detected</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Live alert sent to proctor</td>
+                        </tr>
+                        <tr>
+                            <td>10:39:05</td>
+                            <td>EX-1762</td>
+                            <td>Audio anomaly spike</td>
+                            <td><span class="badge badge-low">Low</span></td>
+                            <td>Tagged for post-exam check</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="cta">
+                <div>
+                    <h3>Ready to pilot in your next exam cycle?</h3>
+                    <p>Deploy with your existing review process and extend controls incrementally.</p>
+                </div>
+                <a href="/signup" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Started Now</a>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p><i class="fas fa-shield-alt"></i> ExamEye Integrity Prototype</p>
+            <p>Designed for transparent monitoring, accountable review, and policy-driven decisions.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

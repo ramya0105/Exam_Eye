@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Workspace | ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+
+<body>
+    <header class="hero-full">
+        <div class="hero-overlay"></div>
+        <div class="hero-inner">
+            <div class="topbar">
+                <div class="brand">
+                    <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <h1>ExamEye Integrity</h1>
+                        <p>Detection workspace</p>
+                    </div>
+                </div>
+                <nav class="nav-links">
+                    <a href="/home">Home</a>
+                    <a href="/realtime">Live Detection</a>
+                    <a href="../static/Notebook.html">Notebook</a>
+                    <a href="/logout">Log Out</a>
+                </nav>
+            </div>
+
+
+        </div>
+    </header>
+
+    <main class="page-wrap main-layout">
+        <section class="hero-content">
+            <p class="eyebrow"><i class="fas fa-microchip"></i> Detection Studio</p>
+            <h2>Evidence-first media analysis for exam integrity review</h2>
+            <p>
+                Run model inference on uploads, generate annotated outputs, and streamline
+                proctor verification with a cleaner, structured detection flow.
+            </p>
+            <div class="hero-pills">
+                <span><i class="fas fa-camera"></i> Image Analysis</span>
+                <span><i class="fas fa-video"></i> Video Analysis</span>
+                <span><i class="fas fa-chart-line"></i> Frame-Level Insights</span>
+            </div>
+        </section>
+        <section class="form-section" id="detection-form">
+            <div class="form-header">
+                <h3>Upload Media for Detection</h3>
+                <p>Choose your media type and run detection in one click.</p>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Upload media type">
+                <button class="tab-btn active" type="button" role="tab" aria-selected="true" data-tab="image-tab">
+                    <i class="fas fa-image"></i> Upload Image
+                </button>
+                <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="video-tab">
+                    <i class="fas fa-film"></i> Upload Video
+                </button>
+            </div>
+
+            <div class="tab-panels">
+                <section id="image-tab" class="tab-panel active" role="tabpanel">
+                    <form action="/detect" method="POST" enctype="multipart/form-data" class="upload-form">
+                        <label for="image-file" class="input-label">Select an image file</label>
+                        <input id="image-file" type="file" name="file" accept="image/*" required>
+                        <p class="hint">Recommended: clear frontal frames, good lighting.</p>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-search"></i> Run Image Detection
+                        </button>
+                    </form>
+                </section>
+
+                <section id="video-tab" class="tab-panel" role="tabpanel" hidden>
+                    <form action="/detect" method="POST" enctype="multipart/form-data" class="upload-form">
+                        <label for="video-file" class="input-label">Select a video file</label>
+                        <input id="video-file" type="file" name="file" accept="video/*" required>
+                        <p class="hint">Recommended: short clips for faster processing.</p>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-search"></i> Run Video Detection
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </section>
+
+        <section class="quality-section">
+            <h3 class="section-title">Detection Quality Controls</h3>
+            <div class="quality-grid">
+                <article class="quality-card">
+                    <h4><i class="fas fa-sliders-h"></i> Confidence Filtering</h4>
+                    <p>Model output is curated for practical review and cleaner evidence interpretation.</p>
+                </article>
+                <article class="quality-card">
+                    <h4><i class="fas fa-ruler-combined"></i> Frame Consistency</h4>
+                    <p>Supports stable frame-by-frame annotation quality across the uploaded media.</p>
+                </article>
+                <article class="quality-card">
+                    <h4><i class="fas fa-file-shield"></i> Traceable Outputs</h4>
+                    <p>Processed files are generated with timestamp-based naming for simple tracking.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="ops-section">
+            <h3 class="section-title">Operational Checklist</h3>
+            <div class="ops-grid">
+                <div class="ops-item"><span>1</span>
+                    <p>Verify candidate visibility in the media.</p>
+                </div>
+                <div class="ops-item"><span>2</span>
+                    <p>Upload file in supported format.</p>
+                </div>
+                <div class="ops-item"><span>3</span>
+                    <p>Run inference and inspect result output.</p>
+                </div>
+                <div class="ops-item"><span>4</span>
+                    <p>Escalate flagged events for human review.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <h3 class="section-title">Quick Notes</h3>
+            <div class="faq-list">
+                <article>
+                    <h4>Can I upload both image and video?</h4>
+                    <p>Yes. Use the tabs above to switch upload mode.</p>
+                </article>
+                <article>
+                    <h4>Where are processed files stored?</h4>
+                    <p>Outputs are written to the static uploads folder and shown on the result page.</p>
+                </article>
+                <article>
+                    <h4>What improves detection quality?</h4>
+                    <p>Stable camera angle, clear subject visibility, and good lighting conditions.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+
+</html>

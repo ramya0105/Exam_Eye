@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Logs | ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="brand">
+                <span class="brand-icon"><i class="fas fa-triangle-exclamation"></i></span>
+                <div>
+                    <h1>Suspicious Logs</h1>
+                    <p>Event-wise suspicious records with evidence images</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="/admin/dashboard">Overview</a>
+                <a href="/admin/sessions">Sessions</a>
+                <a href="/admin/logs">Logs</a>
+                <a href="/logout">Log Out</a>
+            </nav>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="filter-card">
+                <h2><i class="fas fa-filter"></i> Log Filters</h2>
+                <form method="GET" action="/admin/logs" class="filters">
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <select id="username" name="username">
+                            <option value="">All users</option>
+                            {% for username in usernames %}
+                            <option value="{{ username }}" {% if filters.username==username %}selected{% endif %}>{{
+                                username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="event_type">Event Type</label>
+                        <select id="event_type" name="event_type">
+                            <option value="">All events</option>
+                            {% for event_type in event_types %}
+                            <option value="{{ event_type }}" {% if filters.event_type==event_type %}selected{% endif %}>
+                                {{ event_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="session_id">Session ID</label>
+                        <input id="session_id" name="session_id" type="text" value="{{ filters.session_id }}"
+                            placeholder="e.g. 12">
+                    </div>
+                    <div class="field">
+                        <label for="date_from">From Date</label>
+                        <input id="date_from" name="date_from" type="date" value="{{ filters.date_from }}">
+                    </div>
+                    <div class="field">
+                        <label for="date_to">To Date</label>
+                        <input id="date_to" name="date_to" type="date" value="{{ filters.date_to }}">
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-magnifying-glass"></i>
+                            Apply</button>
+                        <a href="/admin/logs" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+            </section>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <p class="label">Filtered Logs</p>
+                    <p class="value">{{ log_summary.total_logs }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="label">Affected Sessions</p>
+                    <p class="value">{{ log_summary.affected_sessions }}</p>
+                </article>
+            </section>
+
+            <section class="split-grid">
+                <article class="table-card">
+                    <h2><i class="fas fa-triangle-exclamation"></i> Suspicious Logs</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Session</th>
+                                    <th>User</th>
+                                    <th>Event</th>
+                                    <th>Offset(s)</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in logs %}
+                                <tr>
+                                    <td>{{ log.id }}</td>
+                                    <td>{{ log.session_id }}</td>
+                                    <td>{{ log.username }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ "%.2f"|format(log.event_time_offset) }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td>
+                                        {% if log.evidence_image_path %}
+                                        <a href="{{ url_for('static', filename=log.evidence_image_path) }}"
+                                            class="image-preview-link"
+                                            data-image-url="{{ url_for('static', filename=log.evidence_image_path) }}"
+                                            target="_blank">View Image</a>
+                                        {% else %}
+                                        N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7">No logs found for selected filters.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <a class="btn btn-secondary {% if not pagination.has_prev %}is-disabled{% endif %}"
+                            href="{{ url_for('admin_logs', username=filters.username, event_type=filters.event_type, session_id=filters.session_id, date_from=filters.date_from, date_to=filters.date_to, page=pagination.prev_page) }}">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </a>
+                        <span class="page-indicator">Page {{ pagination.page }} of {{ pagination.total_pages }} ({{
+                            pagination.total_count }} records)</span>
+                        <a class="btn btn-secondary {% if not pagination.has_next %}is-disabled{% endif %}"
+                            href="{{ url_for('admin_logs', username=filters.username, event_type=filters.event_type, session_id=filters.session_id, date_from=filters.date_from, date_to=filters.date_to, page=pagination.next_page) }}">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="table-card">
+                    <h2><i class="fas fa-chart-pie"></i> Analytics</h2>
+                    <h3 class="mini-title">Top Users</h3>
+                    <div class="mini-list">
+                        {% for row in top_users %}
+                        <p><strong>{{ row.username }}</strong> <span>{{ row.log_count }} logs</span></p>
+                        {% else %}
+                        <p>No user data.</p>
+                        {% endfor %}
+                    </div>
+                    <h3 class="mini-title">Event Distribution</h3>
+                    <div class="mini-list">
+                        {% for row in event_stats %}
+                        <p><strong>{{ row.event_type }}</strong> <span>{{ row.event_count }} events</span></p>
+                        {% else %}
+                        <p>No event data.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <!-- Image preview modal -->
+    <div id="image-modal" class="preview-modal" role="dialog" aria-label="Image preview" hidden>
+        <div class="preview-modal-backdrop"></div>
+        <div class="preview-modal-content preview-modal-image">
+            <button type="button" class="preview-modal-close" aria-label="Close">&times;</button>
+            <img id="image-modal-img" src="" alt="Evidence" />
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var modal = document.getElementById('image-modal');
+            var img = document.getElementById('image-modal-img');
+            var backdrop = modal && modal.querySelector('.preview-modal-backdrop');
+            var closeBtn = modal && modal.querySelector('.preview-modal-close');
+
+            function closeModal() {
+                if (!modal) return;
+                if (img) img.removeAttribute('src');
+                modal.setAttribute('hidden', '');
+            }
+
+            function openModal(url) {
+                if (!modal || !img) return;
+                img.src = url;
+                modal.removeAttribute('hidden');
+                img.focus();
+            }
+
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (backdrop) backdrop.addEventListener('click', closeModal);
+            modal && modal.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('.image-preview-link');
+                if (!link) return;
+                e.preventDefault();
+                var url = link.getAttribute('data-image-url');
+                if (url) openModal(url);
+            });
+        })();
+    </script>
+</body>
+
+</html>

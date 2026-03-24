@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sessions | ExamEye</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="brand">
+                <span class="brand-icon"><i class="fas fa-video"></i></span>
+                <div>
+                    <h1>Proctoring Sessions</h1>
+                    <p>Session-wise monitoring records and videos</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="/admin/dashboard">Overview</a>
+                <a href="/admin/sessions">Sessions</a>
+                <a href="/admin/logs">Logs</a>
+                <a href="/logout">Log Out</a>
+            </nav>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="filter-card">
+                <h2><i class="fas fa-filter"></i> Session Filters</h2>
+                <form method="GET" action="/admin/sessions" class="filters">
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <select id="username" name="username">
+                            <option value="">All users</option>
+                            {% for username in usernames %}
+                            <option value="{{ username }}" {% if filters.username==username %}selected{% endif %}>{{
+                                username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="stop_reason">Stop Reason</label>
+                        <select id="stop_reason" name="stop_reason">
+                            <option value="">All reasons</option>
+                            {% for reason in stop_reasons %}
+                            <option value="{{ reason }}" {% if filters.stop_reason==reason %}selected{% endif %}>{{
+                                reason }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="date_from">From Date</label>
+                        <input id="date_from" name="date_from" type="date" value="{{ filters.date_from }}">
+                    </div>
+                    <div class="field">
+                        <label for="date_to">To Date</label>
+                        <input id="date_to" name="date_to" type="date" value="{{ filters.date_to }}">
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-magnifying-glass"></i>
+                            Apply</button>
+                        <a href="/admin/sessions" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+            </section>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <p class="label">Filtered Sessions</p>
+                    <p class="value">{{ session_summary.total_sessions }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="label">Avg Duration (s)</p>
+                    <p class="value">{{ "%.0f"|format(session_summary.avg_duration) }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="label">Avg Frames</p>
+                    <p class="value">{{ "%.0f"|format(session_summary.avg_frames) }}</p>
+                </article>
+            </section>
+
+            <section class="table-card">
+                <h2><i class="fas fa-video"></i> Proctoring Sessions</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Start</th>
+                                <th>Duration(s)</th>
+                                <th>Frames</th>
+                                <th>Away%</th>
+                                <th>Eyes%</th>
+                                <th>Phone%</th>
+                                <th>Multi%</th>
+                                <th>Stop Reason</th>
+                                <th>Logs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in sessions %}
+                            <tr>
+                                <td>{{ s.id }}</td>
+                                <td>{{ s.username }}</td>
+                                <td>{{ s.start_time }}</td>
+                                <td>{{ s.duration_sec }}</td>
+                                <td>{{ s.total_frames }}</td>
+                                <td>{{ "%.2f"|format(s.looking_away_pct) }}</td>
+                                <td>{{ "%.2f"|format(s.eyes_closed_pct) }}</td>
+                                <td>{{ "%.2f"|format(s.phone_detected_pct) }}</td>
+                                <td>{{ "%.2f"|format(s.unauthorized_people_pct) }}</td>
+                                <td>{{ s.stop_reason }}</td>
+                                <td>{{ s.log_count }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="13">No sessions found for selected filters.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <a class="btn btn-secondary {% if not pagination.has_prev %}is-disabled{% endif %}"
+                        href="{{ url_for('admin_sessions', username=filters.username, stop_reason=filters.stop_reason, date_from=filters.date_from, date_to=filters.date_to, page=pagination.prev_page) }}">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                    <span class="page-indicator">Page {{ pagination.page }} of {{ pagination.total_pages }} ({{
+                        pagination.total_count }} records)</span>
+                    <a class="btn btn-secondary {% if not pagination.has_next %}is-disabled{% endif %}"
+                        href="{{ url_for('admin_sessions', username=filters.username, stop_reason=filters.stop_reason, date_from=filters.date_from, date_to=filters.date_to, page=pagination.next_page) }}">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Video preview modal -->
+    <div id="video-modal" class="preview-modal" role="dialog" aria-label="Video preview" hidden>
+        <div class="preview-modal-backdrop"></div>
+        <div class="preview-modal-content preview-modal-video">
+            <button type="button" class="preview-modal-close" aria-label="Close">&times;</button>
+            <video id="video-modal-player" controls playsinline preload="auto"></video>
+            <p id="video-modal-error" class="preview-modal-error" hidden>Video could not be loaded. It may be missing or
+                in an unsupported format.</p>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var modal = document.getElementById('video-modal');
+            var player = document.getElementById('video-modal-player');
+            var errorEl = document.getElementById('video-modal-error');
+            var backdrop = modal && modal.querySelector('.preview-modal-backdrop');
+            var closeBtn = modal && modal.querySelector('.preview-modal-close');
+
+            function closeModal() {
+                if (!modal) return;
+                if (player) {
+                    player.pause();
+                    player.removeAttribute('src');
+                    player.load();
+                }
+                if (errorEl) errorEl.setAttribute('hidden', '');
+                modal.setAttribute('hidden', '');
+            }
+
+            function openModal(url) {
+                if (!modal || !player) return;
+                if (errorEl) errorEl.setAttribute('hidden', '');
+                player.src = url;
+                modal.removeAttribute('hidden');
+                player.focus();
+            }
+
+            if (player) {
+                player.addEventListener('error', function () {
+                    if (errorEl) errorEl.removeAttribute('hidden');
+                });
+                player.addEventListener('loadeddata', function () {
+                    if (errorEl) errorEl.setAttribute('hidden', '');
+                });
+            }
+
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (backdrop) backdrop.addEventListener('click', closeModal);
+            modal && modal.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('.video-preview-link');
+                if (!link) return;
+                e.preventDefault();
+                var url = link.getAttribute('data-video-url');
+                if (url) openModal(url);
+            });
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Result | ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <a class="brand" href="/home">
+                <span class="brand-icon"><i class="fas fa-shield-alt"></i></span>
+                <span>
+                    <strong>ExamEye Integrity</strong>
+                    <small>Detection result viewer</small>
+                </span>
+            </a>
+            <nav class="nav-links">
+                <a href="/home">Home</a>
+                <a href="/realtime">Live Detection</a>
+                <a href="../static/Notebook.html">Notebook</a>
+                <a href="/logout">Log Out</a>
+            </nav>
+        </header>
+
+        <main class="result-layout">
+            <section class="media-card">
+                <div class="media-head">
+                    <h1>Processed Result</h1>
+                    <span class="type-badge">
+                        <i class="fas {% if file_type == 'video' %}fa-film{% else %}fa-image{% endif %}"></i>
+                        {{ file_type|capitalize }}
+                    </span>
+                </div>
+
+                <div class="media-frame">
+                    {% if file_type == 'image' %}
+                    <img src="{{ file_url }}" alt="Detection result image">
+                    {% elif file_type == 'video' %}
+                    <video controls autoplay muted>
+                        <source src="{{ file_url }}" type="video/mp4">
+                        Your browser does not support this video format.
+                    </video>
+                    {% else %}
+                    <p class="empty-msg">No preview available for this result type.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <aside class="result-side">
+                <article class="info-card">
+                    <h2><i class="fas fa-circle-info"></i> Summary</h2>
+                    <p>Inference completed successfully and the annotated output is displayed here.</p>
+                    <ul>
+                        <li>Review bounding boxes and highlighted detections.</li>
+                        <li>Use full-screen video mode for frame-by-frame checks.</li>
+                        <li>Re-run with a clearer input for better confidence.</li>
+                    </ul>
+                </article>
+
+                <div class="actions">
+                    <a class="btn btn-primary" href="/home"><i class="fas fa-upload"></i> Upload Another File</a>
+                    <a class="btn btn-secondary" href="{{ file_url }}" download><i class="fas fa-download"></i> Download
+                        Result</a>
+                </div>
+            </aside>
+        </main>
+    </div>
+</body>
+
+</html>

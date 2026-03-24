@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo4j Malpractice Graph Visualization</title>
+    <!-- Include vis.js library from CDN -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link rel="stylesheet" href="../static/css/graph.css">
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Interactive Graph Analysis</h1>
+        <a href="/admin/dashboard">← Back to Dashboard</a>
+    </div>
+
+    <div id="error-alert" class="error-message"></div>
+    <div id="loading-indicator" class="loading">Loading Neo4j Data...</div>
+
+    <div id="mynetwork"></div>
+
+    <div class="controls">
+        <h3 style="margin-top:0; margin-bottom:12px; font-size:16px; font-weight:600; color:#1e293b;">Legend</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #3b82f6;"></div> Student
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ef4444;"></div> Malpractice Event
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #f6ee0a;"></div> Session
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // Vis.js Network Options
+        var options = {
+            nodes: {
+                shape: 'dot',
+                size: 25,
+                font: {
+                    size: 14,
+                    color: '#1e293b',
+                    face: 'Inter, sans-serif'
+                },
+                borderWidth: 2,
+                shadow: true
+            },
+            edges: {
+                width: 2,
+                color: { color: '#cbd5e1', highlight: '#94a3b8' },
+                arrows: 'to',
+                font: {
+                    size: 11,
+                    align: 'middle',
+                    color: '#64748b',
+                    face: 'Inter, sans-serif'
+                },
+                smooth: {
+                    type: 'continuous'
+                }
+            },
+            groups: {
+                1: { color: { background: '#3b82f6', border: '#2563eb' } }, // Student
+                2: { color: { background: '#ef4444', border: '#dc2626' } }, // Event
+                3: { color: { background: '#10b981', border: '#059669' } }  // Session
+            },
+            physics: {
+                solver: 'forceAtlas2Based',
+                forceAtlas2Based: {
+                    gravitationalConstant: -100,
+                    springLength: 150,
+                    springConstant: 0.08
+                },
+                stabilization: { iterations: 150 }
+            },
+            interaction: {
+                hover: true,
+                tooltipDelay: 100
+            }
+        };
+
+        const errorDiv = document.getElementById('error-alert');
+        const loadingDiv = document.getElementById('loading-indicator');
+
+        // Fetch data from Flask API
+        fetch('/api/graph')
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Server error'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingDiv.style.display = 'none';
+
+                if (data.nodes.length === 0) {
+                    errorDiv.innerText = "No data found in the Graph Database. Complete a proctoring session first to generate graph data.";
+                    errorDiv.style.display = 'block';
+                }
+
+                var container = document.getElementById('mynetwork');
+
+                // create an array with nodes
+                var nodes = new vis.DataSet(data.nodes);
+
+                // create an array with edges
+                var edges = new vis.DataSet(data.edges);
+
+                var networkData = {
+                    nodes: nodes,
+                    edges: edges
+                };
+
+                // Initialize network!
+                var network = new vis.Network(container, networkData, options);
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                errorDiv.innerText = error.message;
+                errorDiv.style.display = 'block';
+                console.error('Error fetching graph data:', error);
+            });
+    </script>
+</body>
+
+</html>

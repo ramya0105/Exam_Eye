@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Monitoring | ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/realtime.css') }}">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="brand">
+                <span class="brand-icon"><i class="fas fa-shield-alt"></i></span>
+                <div>
+                    <h1>ExamEye Integrity</h1>
+                    <p>Realtime proctoring dashboard</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="/home">Home</a>
+                <a href="/realtime">Live Detection</a>
+                <a href="../static/Notebook.html">Notebook</a>
+                <a href="/logout">Log Out</a>
+            </nav>
+        </header>
+
+        <main class="realtime-layout">
+            <section class="feed-card">
+                <div class="card-head">
+                    <h2><i class="fas fa-video"></i> Live Webcam Feed</h2>
+                    <span class="status-pill" id="live-status">Running</span>
+                </div>
+                <div class="feed-wrap">
+                    <img id="realtime-feed" src="{{ url_for('realtime_feed') }}" alt="Realtime monitoring feed">
+                </div>
+                <div class="actions">
+                    <button id="stop-btn" type="button" class="btn btn-danger">
+                        <i class="fas fa-stop"></i> Stop Stream
+                    </button>
+                    <button id="restart-btn" type="button" class="btn btn-secondary">
+                        <i class="fas fa-rotate-right"></i> Restart
+                    </button>
+                </div>
+            </section>
+
+            <aside class="score-side">
+                <section class="score-card">
+                    <h3><i class="fas fa-chart-column"></i> Realtime Scores</h3>
+                    <div class="score-grid">
+                        <article>
+                            <p class="label">Duration</p>
+                            <p class="value" id="duration-sec">0s</p>
+                        </article>
+                        <article>
+                            <p class="label">Frames</p>
+                            <p class="value" id="total-frames">0</p>
+                        </article>
+                        <article>
+                            <p class="label">Looking Away</p>
+                            <p class="value" id="looking-away">0%</p>
+                        </article>
+                        <article>
+                            <p class="label">Eyes Closed</p>
+                            <p class="value" id="eyes-closed">0%</p>
+                        </article>
+                        <article>
+                            <p class="label">Phone Detected</p>
+                            <p class="value" id="phone-detected">0%</p>
+                        </article>
+                        <article>
+                            <p class="label">Unauthorized People</p>
+                            <p class="value" id="unauth-people">0%</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="score-card">
+                    <h3><i class="fas fa-circle-info"></i> Notes</h3>
+                    <ul>
+                        <li>Scores are updated continuously during live monitoring.</li>
+                        <li>Use good lighting and stable camera angle for better detection.</li>
+                        <li>If stream stops, click restart to initialize webcam again.</li>
+                    </ul>
+                </section>
+            </aside>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/realtime.js') }}"></script>
+</body>
+
+</html>

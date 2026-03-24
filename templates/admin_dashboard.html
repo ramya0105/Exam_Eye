@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ExamEye Integrity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="brand">
+                <span class="brand-icon"><i class="fas fa-user-shield"></i></span>
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Overview, uploads, and analytics</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="/admin/dashboard">Overview</a>
+                <a href="/admin/sessions">Sessions</a>
+                <a href="/admin/logs">Logs</a>
+                <a href="/graph">Graph Analysis</a>
+                <a href="/logout">Log Out</a>
+            </nav>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="quick-links">
+                <a class="link-card" href="/admin/sessions">
+                    <i class="fas fa-video"></i>
+                    <div>
+                        <h3>Sessions Page</h3>
+                        <p>View session videos, frames, and behavior percentages with filters.</p>
+                    </div>
+                </a>
+                <a class="link-card" href="/admin/logs">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <div>
+                        <h3>Logs Page</h3>
+                        <p>View suspicious logs with event-specific filters and image evidence.</p>
+                    </div>
+                </a>
+            </section>
+
+            <section class="upload-card">
+                <h2><i class="fas fa-upload"></i> Admin Upload Detection</h2>
+                <div class="upload-grid">
+                    <article>
+                        <h3>Upload Image</h3>
+                        <form action="/detect" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="file" accept="image/*" required>
+                            <button type="submit" class="btn btn-primary">Run Image Detection</button>
+                        </form>
+                    </article>
+                    <article>
+                        <h3>Upload Video</h3>
+                        <form action="/detect" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="file" accept="video/*" required>
+                            <button type="submit" class="btn btn-primary">Run Video Detection</button>
+                        </form>
+                    </article>
+                </div>
+            </section>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-video"></i></p>
+                    <p class="label">Total Sessions</p>
+                    <p class="value">{{ summary.total_sessions }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-file-lines"></i></p>
+                    <p class="label">Total Logs</p>
+                    <p class="value">{{ overview.total_logs }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-person-running"></i></p>
+                    <p class="label">Avg Looking Away</p>
+                    <p class="value">{{ "%.2f"|format(summary.avg_away) }}%</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-eye-slash"></i></p>
+                    <p class="label">Avg Eyes Closed</p>
+                    <p class="value">{{ "%.2f"|format(summary.avg_eyes_closed) }}%</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-mobile-screen-button"></i></p>
+                    <p class="label">Avg Phone Detection</p>
+                    <p class="value">{{ "%.2f"|format(summary.avg_phone) }}%</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-users"></i></p>
+                    <p class="label">Avg Unauthorized People</p>
+                    <p class="value">{{ "%.2f"|format(summary.avg_unauth) }}%</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-phone-volume"></i></p>
+                    <p class="label">Phone Events</p>
+                    <p class="value">{{ overview.phone_events }}</p>
+                </article>
+                <article class="summary-card">
+                    <p class="icon"><i class="fas fa-user-group"></i></p>
+                    <p class="label">Multi People Events</p>
+                    <p class="value">{{ overview.multi_people_events }}</p>
+                </article>
+            </section>
+
+            <section class="split-grid">
+                <article class="table-card">
+                    <h2><i class="fas fa-chart-pie"></i> Top Users</h2>
+                    <div class="mini-list">
+                        {% for row in top_users %}
+                        <p><strong>{{ row.username }}</strong> <span>{{ row.session_count }} sessions</span></p>
+                        {% else %}
+                        <p>No user data.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+
+                <article class="table-card">
+                    <h2><i class="fas fa-wave-square"></i> Event Distribution</h2>
+                    <div class="mini-list">
+                        {% for row in event_stats %}
+                        <p><strong>{{ row.event_type }}</strong> <span>{{ row.event_count }} events</span></p>
+                        {% else %}
+                        <p>No event data.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>
